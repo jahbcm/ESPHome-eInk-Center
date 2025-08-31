@@ -371,8 +371,7 @@ display:
       std::string sunrise = id(sunrise_hour).state;
       std::string sunset = id(sunset_hour).state;
 
-      // unordered map not supported, missing headers, undef symbol
-      std::map<std::string, std::string> weather_icon_state {
+      std::unordered_map<std::string, std::string> weather_icon_state {
           {"cloudy", "\U000F0590"},
           {"clear-day", "\U000F0599"},
           {"clear-night", "\U000F0594"},
@@ -392,7 +391,7 @@ display:
           {"windy-variant", "\U000F059E"}
       };
 
-      std::map<std::string, std::string> moon_state_icon {
+      std::unordered_map<std::string, std::string> moon_state_icon {
           {"new_moon", "\U000F0F64"},
           {"waxing_crescent", "\U000F0F67"},
           {"first_quarter", "\U000F0F61"},
@@ -441,7 +440,7 @@ display:
                 it.printf(70, 180, id(roboto_bold_20), TextAlign::BASELINE_CENTER, "%.1f %s", id(hum_outside).state, "%");
                 break;
             
-            case 3: // rain expected in
+            case 3: // rain/ snow expected in
               if (id(snow_in).state > 0 && id(snow_in).state < 120)
               {
                 it.print(70, 245, id(weather_font_40), TextAlign::BASELINE_CENTER, "\U000F0598");
@@ -465,11 +464,12 @@ display:
       short tty = 70;    // start text position y 
       short tix = 140;   // start icon position x 
       short tiy = 15;    // start icon position y 
+
       short txoffset = 64;
       short tyoffset = 66;
 
-      /* Loop for the single room */
-      for (short i = 1; i < 6; ++i) {
+      // Loop for each field
+      for (short i = 1; i < 7; ++i) {
         switch (i) 
         {
           case 1: // Living room, 0, 1
@@ -509,8 +509,6 @@ display:
         
             else
               it.printf(ttx + (txoffset * 1) - 15, tty + (tyoffset * 2) - 5, id(roboto_reg_20), TextAlign::BASELINE_LEFT, "%.1f %s", id(hum_kitchen).state, "%");
-            
-            it.printf(ttx + (txoffset * 0), tiy + (tyoffset * 3), id(roboto_bold_27), TextAlign::TOP_LEFT, "%.0f ppm", id(co2).state);
 
             break;
 
@@ -535,8 +533,12 @@ display:
             it.printf(ttx + (txoffset * 3) - 15, tty + (tyoffset * 1) - 5, id(roboto_reg_20), TextAlign::BASELINE_LEFT, "%.1f %s", id(hum_hall).state, "%");
             break;
 
-            default:
-              break;
+          case 6: // CO2 ppm
+            it.printf(ttx + (txoffset * 0), tiy + (tyoffset * 3), id(roboto_bold_27), TextAlign::TOP_LEFT, "%.0f ppm", id(co2).state);
+            break;
+
+          default:
+            break;
         }
       }
 
@@ -604,7 +606,7 @@ display:
 
         else
           it.print(wifi_x, wifi_y, id(weather_font_15), TextAlign::BASELINE_CENTER, "\U000F092F");
-      }
+      } 
 
 
 
